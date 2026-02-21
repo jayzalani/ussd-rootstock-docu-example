@@ -1,0 +1,39 @@
+{
+  "_format": "hh3-sol-build-info-1",
+  "id": "solc-0_8_28-f02c81a311ba6bc71e2a2617171bb48074356b01",
+  "solcVersion": "0.8.28",
+  "solcLongVersion": "0.8.28+commit.7893614a",
+  "userSourceNameMap": {
+    "contracts/InclusiveDeFi.sol": "project/contracts/InclusiveDeFi.sol"
+  },
+  "input": {
+    "language": "Solidity",
+    "settings": {
+      "evmVersion": "cancun",
+      "optimizer": {
+        "enabled": true,
+        "runs": 200
+      },
+      "outputSelection": {
+        "*": {
+          "": [
+            "ast"
+          ],
+          "*": [
+            "abi",
+            "evm.bytecode",
+            "evm.deployedBytecode",
+            "evm.methodIdentifiers",
+            "metadata"
+          ]
+        }
+      },
+      "remappings": []
+    },
+    "sources": {
+      "project/contracts/InclusiveDeFi.sol": {
+        "content": "// SPDX-License-Identifier: MIT\r\npragma solidity ^0.8.19;\r\n\r\ncontract InclusiveDeFi {\r\n    mapping(address => uint256) public balances;\r\n    mapping(address => uint256) public loans;\r\n\r\n    event Transfer(address indexed from, address indexed to, uint256 amount);\r\n    event LoanIssued(address indexed user, uint256 amount);\r\n\r\n    // 1. P2P Transfer (Write Operation)\r\n    function transfer(address to, uint256 amount) public {\r\n        require(balances[msg.sender] >= amount, \"Insufficient balance\");\r\n        balances[msg.sender] -= amount;\r\n        balances[to] += amount;\r\n        emit Transfer(msg.sender, to, amount);\r\n    }\r\n\r\n    // 2. Micro-Loan (Write Operation)\r\n    function applyForLoan() public {\r\n        require(loans[msg.sender] == 0, \"Existing loan active\");\r\n        uint256 loanAmount = 0.01 ether; // Fixed small loan for demo\r\n        loans[msg.sender] = loanAmount;\r\n        balances[msg.sender] += loanAmount;\r\n        emit LoanIssued(msg.sender, loanAmount);\r\n    }\r\n\r\n    // 3. Balance Check (Read Operation)\r\n    function getBalance(address user) public view returns (uint256) {\r\n        return balances[user];\r\n    }\r\n\r\n    // For testing: Deposit funds\r\n    function deposit() public payable {\r\n        balances[msg.sender] += msg.value;\r\n    }\r\n}"
+      }
+    }
+  }
+}
